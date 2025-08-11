@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2048</title>
+    <style>
+        /* General Styles */
+        :root {
+            --primary-color: #333;
+            --secondary-color: #fff;
+            --background-color: #f4f4f4;
+            --accent-color: #007bff;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        /* 2048 */
+        .grid-2048 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
+            width: 400px;
+            height: 400px;
+            background-color: #bbada0;
+            border: 10px solid #bbada0;
+            border-radius: 6px;
+        }
+        .grid-2048-cell {
+            background-color: #cdc1b4;
+            border-radius: 3px;
+        }
+        .tile-2048 {
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            background-color: #eee4da;
+            border-radius: 3px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 45px;
+            line-height: 90px;
+        }
+        .back-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>2048</h2>
+        <div class="grid-2048"></div>
+        <p>Score: <span id="score-2048">0</span></p>
+        <a href="index.html" class="back-button">Back to Menu</a>
+    </div>
+
+    <script>
+        const grid2048 = document.querySelector('.grid-2048');
+        const score2048 = document.getElementById('score-2048');
+        let board = [];
+        let score = 0;
+
+        function setup2048() {
+            for (let i = 0; i < 4; i++) {
+                board[i] = [];
+                for (let j = 0; j < 4; j++) {
+                    board[i][j] = 0;
+                    const cell = document.createElement('div');
+                    cell.classList.add('grid-2048-cell');
+                    grid2048.appendChild(cell);
+                }
+            }
+            addNumber();
+            addNumber();
+            updateBoard();
+        }
+
+        function addNumber() {
+            let options = [];
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (board[i][j] === 0) {
+                        options.push({ x: i, y: j });
+                    }
+                }
+            }
+            if (options.length > 0) {
+                const spot = options[Math.floor(Math.random() * options.length)];
+                const r = Math.random(1);
+                board[spot.x][spot.y] = r > 0.5 ? 2 : 4;
+            }
+        }
+
+        function updateBoard() {
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    const cell = grid2048.children[i * 4 + j];
+                    cell.textContent = board[i][j] === 0 ? '' : board[i][j];
+                }
+            }
+        }
+
+        function slide(row) {
+            let arr = row.filter(val => val);
+            let missing = 4 - arr.length;
+            let zeros = Array(missing).fill(0);
+            arr = zeros.concat(arr);
+            return arr;
+        }
+
+        function combine(row) {
+            for (let i = 3; i >= 1; i--) {
+                let a = row[i];
+                let b = row[i - 1];
+                if (a === b) {
+                    row[i] = a + b;
+                    score += row[i];
+                    row[i - 1] = 0;
+                }
+            }
+            return row;
+        }
+
+        function operate(row) {
+            row = slide(row);
+            row = combine(row);
+            row = slide(row);
+            return row;
+        }
+
+        function keyPressed(e) {
+            let flipped = false;
+            let rotated = false;
+            if (e.key === 'ArrowDown') {
+                // no change
+            } else if (e.key === 'ArrowUp') {
+                board = flipGrid(board);
+                flipped = true;
+            } else if (e.key === 'ArrowRight') {
+                board = rotateGrid(board);
+                rotated = true;
+            } else if (e.key === 'ArrowLeft') {
+                board = rotateGrid(board);
+                board = flipGrid(board);
+                rotated = true;
+                flipped = true;
+            }
+
+            for (let i = 0; i < 4; i++) {
+                board[i] = operate(board[i]);
+            }
+
+            if (flipped) {
+                board = flipGrid(board);
+            }
+
+            if (rotated) {
+                board = rotateGrid(board);
+                board = rotateGrid(board);
+                board = rotateGrid(board);
+            }
+
+            addNumber();
+            updateBoard();
+            score2048.textContent = score;
+        }
+
+        function flipGrid(grid) {
+            for (let i = 0; i < 4; i++) {
+                grid[i].reverse();
+            }
+            return grid;
+        }
+
+        function rotateGrid(grid) {
+            let newGrid = [];
+            for (let i = 0; i < 4; i++) {
+                newGrid[i] = [];
+                for (let j = 0; j < 4; j++) {
+                    newGrid[i][j] = grid[j][i];
+                }
+            }
+            return newGrid;
+        }
+
+        setup2048();
+        document.addEventListener('keyup', keyPressed);
+    </script>
+</body>
+</html>

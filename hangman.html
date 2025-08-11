@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman</title>
+    <style>
+        /* General Styles */
+        :root {
+            --primary-color: #333;
+            --secondary-color: #fff;
+            --background-color: #f4f4f4;
+            --accent-color: #007bff;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        #hangman-word {
+            font-size: 2rem;
+            letter-spacing: 0.5rem;
+            margin: 20px 0;
+        }
+        #hangman-guesses {
+            margin-bottom: 20px;
+        }
+        #hangman-input {
+            width: 50px;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        .back-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Hangman</h2>
+        <div id="hangman-word"></div>
+        <div id="hangman-guesses"></div>
+        <input type="text" id="hangman-input" maxlength="1">
+        <button id="hangman-guess">Guess</button>
+        <p id="hangman-message"></p>
+        <a href="index.html" class="back-button">Back to Menu</a>
+    </div>
+
+    <script>
+        const hangmanWordEl = document.getElementById('hangman-word');
+        const hangmanGuessesEl = document.getElementById('hangman-guesses');
+        const hangmanInput = document.getElementById('hangman-input');
+        const hangmanGuessBtn = document.getElementById('hangman-guess');
+        const hangmanMessageEl = document.getElementById('hangman-message');
+        const hangmanWords = ['javascript', 'html', 'css', 'python', 'java'];
+        let selectedWord = hangmanWords[Math.floor(Math.random() * hangmanWords.length)];
+        const correctLetters = [];
+        const wrongLetters = [];
+
+        function displayWord() {
+            hangmanWordEl.innerHTML = `
+                ${selectedWord
+                    .split('')
+                    .map(
+                        letter => `
+                            <span class="letter">
+                                ${correctLetters.includes(letter) ? letter : ''}
+                            </span>
+                        `
+                    )
+                    .join('')}
+            `;
+
+            const innerWord = hangmanWordEl.innerText.replace(/\n/g, '');
+
+            if (innerWord === selectedWord) {
+                hangmanMessageEl.innerText = 'You won!';
+            }
+        }
+
+        function updateWrongLettersEl() {
+            hangmanGuessesEl.innerHTML = `
+                ${wrongLetters.length > 0 ? '<p>Wrong</p>' : ''}
+                ${wrongLetters.map(letter => `<span>${letter}</span>`)}
+            `;
+
+            if (wrongLetters.length === 6) {
+                hangmanMessageEl.innerText = 'You lost!';
+            }
+        }
+
+        function showNotification() {
+            hangmanMessageEl.innerText = 'You have already entered this letter';
+            setTimeout(() => {
+                hangmanMessageEl.innerText = '';
+            }, 2000);
+        }
+
+        hangmanGuessBtn.addEventListener('click', () => {
+            const letter = hangmanInput.value;
+
+            if (selectedWord.includes(letter)) {
+                if (!correctLetters.includes(letter)) {
+                    correctLetters.push(letter);
+                    displayWord();
+                } else {
+                    showNotification();
+                }
+            } else {
+                if (!wrongLetters.includes(letter)) {
+                    wrongLetters.push(letter);
+                    updateWrongLettersEl();
+                } else {
+                    showNotification();
+                }
+            }
+        });
+
+        displayWord();
+    </script>
+</body>
+</html>

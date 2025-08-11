@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Test</title>
+    <style>
+        /* General Styles */
+        :root {
+            --primary-color: #333;
+            --secondary-color: #fff;
+            --background-color: #f4f4f4;
+            --accent-color: #007bff;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        #typing-text {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        #typing-input {
+            width: 100%;
+            font-size: 1.2rem;
+        }
+        .back-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Typing Speed Test</h2>
+        <p id="typing-text">This is a sample text for the typing speed test.</p>
+        <textarea id="typing-input" rows="5" cols="50"></textarea>
+        <p>Time: <span id="typing-timer">0</span>s</p>
+        <p>WPM: <span id="typing-wpm">0</span></p>
+        <button id="typing-restart">Restart</button>
+        <a href="index.html" class="back-button">Back to Menu</a>
+    </div>
+
+    <script>
+        const typingText = document.getElementById('typing-text');
+        const typingInput = document.getElementById('typing-input');
+        const typingTimer = document.getElementById('typing-timer');
+        const typingWpm = document.getElementById('typing-wpm');
+        const typingRestart = document.getElementById('typing-restart');
+        let timer;
+        let time = 0;
+        let isTyping = false;
+
+        const sampleTexts = [
+            "The quick brown fox jumps over the lazy dog.",
+            "Never underestimate the power of a good book.",
+            "The journey of a thousand miles begins with a single step.",
+            "To be or not to be, that is the question."
+        ];
+
+        function startTypingTest() {
+            typingText.textContent = sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
+            typingInput.value = '';
+            clearInterval(timer);
+            time = 0;
+            isTyping = false;
+            typingTimer.textContent = '0s';
+            typingWpm.textContent = '0';
+        }
+
+        typingInput.addEventListener('input', () => {
+            if (!isTyping) {
+                isTyping = true;
+                timer = setInterval(() => {
+                    time++;
+                    typingTimer.textContent = `${time}s`;
+                    const wordsTyped = typingInput.value.trim().split(' ').length;
+                    const wpm = Math.round((wordsTyped / time) * 60);
+                    typingWpm.textContent = wpm;
+                }, 1000);
+            }
+        });
+
+        typingRestart.addEventListener('click', startTypingTest);
+        startTypingTest();
+    </script>
+</body>
+</html>

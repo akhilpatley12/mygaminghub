@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors</title>
+    <style>
+        /* General Styles */
+        :root {
+            --primary-color: #333;
+            --secondary-color: #fff;
+            --background-color: #f4f4f4;
+            --accent-color: #007bff;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        button {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        .back-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Rock Paper Scissors</h2>
+        <button id="rock">Rock</button>
+        <button id="paper">Paper</button>
+        <button id="scissors">Scissors</button>
+        <p id="rps-result"></p>
+        <a href="index.html" class="back-button">Back to Menu</a>
+    </div>
+
+    <script>
+        const rpsResult = document.getElementById('rps-result');
+        const rockBtn = document.getElementById('rock');
+        const paperBtn = document.getElementById('paper');
+        const scissorsBtn = document.getElementById('scissors');
+
+        const rpsChoices = ['rock', 'paper', 'scissors'];
+
+        function getComputerChoice() {
+            return rpsChoices[Math.floor(Math.random() * rpsChoices.length)];
+        }
+
+        function playRPS(playerChoice) {
+            const computerChoice = getComputerChoice();
+            let result = '';
+
+            if (playerChoice === computerChoice) {
+                result = "It's a tie!";
+            } else if (
+                (playerChoice === 'rock' && computerChoice === 'scissors') ||
+                (playerChoice === 'paper' && computerChoice === 'rock') ||
+                (playerChoice === 'scissors' && computerChoice === 'paper')
+            ) {
+                result = `You win! ${playerChoice} beats ${computerChoice}.`;
+            } else {
+                result = `You lose! ${computerChoice} beats ${playerChoice}.`;
+            }
+
+            rpsResult.textContent = result;
+        }
+
+        rockBtn.addEventListener('click', () => playRPS('rock'));
+        paperBtn.addEventListener('click', ()_=> playRPS('paper'));
+        scissorsBtn.addEventListener('click', () => playRPS('scissors'));
+    </script>
+</body>
+</html>

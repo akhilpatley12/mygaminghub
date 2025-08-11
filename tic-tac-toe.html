@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        /* General Styles */
+        :root {
+            --primary-color: #333;
+            --secondary-color: #fff;
+            --background-color: #f4f4f4;
+            --accent-color: #007bff;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        /* Tic Tac Toe */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 5px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            border: 1px solid var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        .back-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Tic Tac Toe</h2>
+        <div class="board" id="tic-tac-toe-board">
+            <div class="cell" data-cell></div>
+            <div class="cell" data-cell></div>
+            <div class="cell" data-cell></div>
+            <div class="cell" data-cell></div>
+            <div class="cell" data-cell></div>
+            <div class="cell" data-cell></div>
+            <div class="cell" data-cell></div>
+            <div class="cell" data-cell></div>
+            <div class="cell" data-cell></div>
+        </div>
+        <p id="tic-tac-toe-status"></p>
+        <button id="tic-tac-toe-restart">Restart</button>
+        <a href="index.html" class="back-button">Back to Menu</a>
+    </div>
+
+    <script>
+        const ticTacToeCells = document.querySelectorAll('[data-cell]');
+        const ticTacToeStatus = document.getElementById('tic-tac-toe-status');
+        const ticTacToeRestart = document.getElementById('tic-tac-toe-restart');
+        let isPlayerXTurn = true;
+        let ticTacToeGameState = ['', '', '', '', '', '', '', '', ''];
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+        let isGameActive = true;
+
+        function handleCellClick(e) {
+            const cell = e.target;
+            const cellIndex = Array.from(ticTacToeCells).indexOf(cell);
+
+            if (ticTacToeGameState[cellIndex] !== '' || !isGameActive) {
+                return;
+            }
+
+            ticTacToeGameState[cellIndex] = isPlayerXTurn ? 'X' : 'O';
+            cell.textContent = ticTacToeGameState[cellIndex];
+            isPlayerXTurn = !isPlayerXTurn;
+            ticTacToeStatus.textContent = `Player ${isPlayerXTurn ? 'X' : 'O'}'s turn`;
+
+            checkResult();
+        }
+
+        function checkResult() {
+            let roundWon = false;
+            for (let i = 0; i < winningConditions.length; i++) {
+                const winCondition = winningConditions[i];
+                let a = ticTacToeGameState[winCondition[0]];
+                let b = ticTacToeGameState[winCondition[1]];
+                let c = ticTacToeGameState[winCondition[2]];
+                if (a === '' || b === '' || c === '') {
+                    continue;
+                }
+                if (a === b && b === c) {
+                    roundWon = true;
+                    break;
+                }
+            }
+
+            if (roundWon) {
+                ticTacToeStatus.textContent = `Player ${!isPlayerXTurn ? 'X' : 'O'} has won!`;
+                isGameActive = false;
+                return;
+            }
+
+            if (!ticTacToeGameState.includes('')) {
+                ticTacToeStatus.textContent = 'Game is a draw!';
+                isGameActive = false;
+                return;
+            }
+        }
+
+        function restartTicTacToe() {
+            isPlayerXTurn = true;
+            isGameActive = true;
+            ticTacToeGameState = ['', '', '', '', '', '', '', '', ''];
+            ticTacToeStatus.textContent = `Player X's turn`;
+            ticTacToeCells.forEach(cell => cell.textContent = '');
+        }
+
+        ticTacToeCells.forEach(cell => cell.addEventListener('click', handleCellClick));
+        ticTacToeRestart.addEventListener('click', restartTicTacToe);
+        restartTicTacToe();
+    </script>
+</body>
+</html>

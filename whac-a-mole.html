@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whac-a-Mole</title>
+    <style>
+        /* General Styles */
+        :root {
+            --primary-color: #333;
+            --secondary-color: #fff;
+            --background-color: #f4f4f4;
+            --accent-color: #007bff;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        /* Whac-a-Mole */
+        .whac-a-mole-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 300px;
+            margin: 20px auto;
+        }
+        .mole-hole {
+            width: 100px;
+            height: 100px;
+            background-color: #8B4513;
+            border-radius: 50%;
+            position: relative;
+        }
+        .mole {
+            width: 80px;
+            height: 80px;
+            background-color: #D2B48C;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.2s;
+        }
+        .mole.up {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .back-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Whac-a-Mole</h2>
+        <div class="whac-a-mole-grid">
+            <div class="mole-hole"></div>
+            <div class="mole-hole"></div>
+            <div class="mole-hole"></div>
+            <div class="mole-hole"></div>
+            <div class="mole-hole"></div>
+            <div class="mole-hole"></div>
+            <div class="mole-hole"></div>
+            <div class="mole-hole"></div>
+            <div class="mole-hole"></div>
+        </div>
+        <p>Score: <span id="whac-a-mole-score">0</span></p>
+        <a href="index.html" class="back-button">Back to Menu</a>
+    </div>
+
+    <script>
+        const moleHoles = document.querySelectorAll('.mole-hole');
+        const whacScore = document.getElementById('whac-a-mole-score');
+        let whacAMoleScore = 0;
+        let moleInterval;
+
+        function randomMole() {
+            moleHoles.forEach(hole => {
+                hole.innerHTML = '';
+            });
+
+            const randomHole = moleHoles[Math.floor(Math.random() * moleHoles.length)];
+            const mole = document.createElement('div');
+            mole.classList.add('mole');
+            randomHole.appendChild(mole);
+
+            setTimeout(() => {
+                mole.classList.add('up');
+            }, 100);
+
+            setTimeout(() => {
+                mole.classList.remove('up');
+            }, 1000);
+        }
+
+        moleHoles.forEach(hole => {
+            hole.addEventListener('click', () => {
+                if (hole.querySelector('.mole.up')) {
+                    whacAMoleScore++;
+                    whacScore.textContent = whacAMoleScore;
+                }
+            });
+        });
+
+        moleInterval = setInterval(randomMole, 1200);
+    </script>
+</body>
+</html>
